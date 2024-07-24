@@ -1,7 +1,19 @@
 module.exports = async function (self) {
 	self.setVariableDefinitions([
-		{ variableId: 'variable1', name: 'My first variable' },
-		{ variableId: 'variable2', name: 'My second variable' },
-		{ variableId: 'variable3', name: 'Another variable' },
+		{ variableId: 'sn', name: 'Serial Number' },
+		{ variableId: 'sw', name: 'Software Version' },
+		{ variableId: 'eth_ip', name: 'Ethernet IP Address' },
+		{ variableId: 'cam_num', name: 'Camera Number' },
+		{ variableId: 'url', name: 'Session URL' },
+		{ variableId: 'hw', name: 'Hardware Version' },
+		{ variableId: 'mac', name: 'MAC Address' },
+		{ variableId: 'ble', name: 'Bluetooth Version?' },
+		{ variableId: 'platform', name: 'Camera Platform' },
+		{ variableId: 'fmt', name: 'List of Formats available' },
+		{ variableId: 'mode', name: 'Current Mode of the camera is' },
+		{ variableId: 'test7', name: 'Test Variable 7' },
+		{ variableId: 'test8', name: 'Test Variable 8' },
+		{ variableId: 'test9', name: 'Test Variable 9' },
+		{ variableId: 'test10', name: 'Test Variable 10' },
 	])
 }
