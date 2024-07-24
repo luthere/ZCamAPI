@@ -1,5 +1,5 @@
 {
-	"name": "your-module-name",
+	"name": "zcam-camera",
 	"version": "0.1.0",
 	"main": "main.js",
 	"scripts": {
@@ -9,10 +9,10 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/bitfocus/companion-module-your-module-name.git"
+		"url": "git+https://github.com/luthere/companion-module-zcam-camera"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.7.0"
+		"@companion-module/base": "~1..0"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^1.4.2"

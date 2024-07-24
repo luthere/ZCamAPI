@@ -2,15 +2,15 @@
 	"id": "zcam-camera-control",
 	"name": "zacam-camera-control",
 	"shortname": "zcam-control",
-	"description": "Controlls ZCam cameras via HTTP requests",
-	"version": "0.0.1",
+	"description": "Controls ZCam cameras via HTTP requests",
+	"version": "0.0.0",
 	"license": "MIT",
-	"repository": "git+https://github.com/bitfocus/companion-module-your-module-name.git",
-	"bugs": "https://github.com/bitfocus/companion-module-your-module-name/issues",
+	"repository": "git+https://github.com/luthere/companion-module-zcam-camera.git",
+	"bugs": "https://github.com/luthere/companion-module-zcam-camera/issues",
 	"maintainers": [
 		{
-			"name": "Your name",
-			"email": "Your email"
+			"name": "Luther Ellenson",
+			"email": "lutherellenson@gmail.com"
 		}
 	],
 	"runtime": {
@@ -20,7 +20,7 @@
 		"entrypoint": "../main.js"
 	},
 	"legacyIds": [],
-	"manufacturer": "Your company",
-	"products": ["Your product"],
-	"keywords": []
+	"manufacturer": "ZCam",
+	"products": ["E2-M4"],
+	"keywords": ["camera", "control", "zcam"]
 }
