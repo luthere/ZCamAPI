@@ -7,8 +7,7 @@ const UpdateVariableDefinitions = require('./variables')
 class ModuleInstance extends InstanceBase {
 	
 	session
-	baseUrl = 'http://10.10.0.176' // Default IP
-	mode
+	baseUrl  // Default IP
 	
 	constructor(internal) {
 		super(internal)

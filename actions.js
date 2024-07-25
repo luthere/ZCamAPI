@@ -2,32 +2,76 @@ const Choices = require('./choices')
 module.exports = function (self) {
 
 	self.setActionDefinitions({
-		set_mode: {
-			name: 'System: Set Camera Mode',
-			options: [
-				{	
-					type: 'dropdown',
-					id: 'mode',
-					label: 'Camera Mode',
-					default: 'to_rec',
-					choices: [
-						{id: 'to_rec', label: 'Record'},
-						{id: 'to_pb', label: 'Playback'},
-						//{id: 'rec_tl', label: 'Record Timelapse'},
-					],
-					
-				},
-			],
-			callback: async (event) => {
-				//console.log('Hello world!', Choices.CAMERA_MODES)
-				console.log(`API send: ${self.baseUrl}/ctrl/mode?action=${event.options.mode}`)
-				const response = await fetch(`${self.baseUrl}/ctrl/mode?action=${event.options.mode}`, { method: 'GET' })
+		//////////////////////////////////////////////////////////////////
+		//////////////////////////  GET ACTIONS  //////////////////////////
+		//////////////////////////////////////////////////////////////////
+		get_info: {
+			// This gets the current information of the camera
+			// This will set all the information to custom variables
+			name: 'System: Get Camera Info',
+			callback: async () => {
+				console.log('Getting Info')
+				console.log(`API send: ${self.baseUrl}/info`)
+				const response = await fetch(`${self.baseUrl}/info`, { method: 'GET' })
 				let resultData = await response.json()
+				self.setVariableValues({ sn: resultData.sn, 
+										sw: resultData.sw, 
+										eth_ip: resultData.eth_ip, 
+										cam_num: resultData.number,
+										hw: resultData.hw,
+										mac: resultData.mac,
+										ble: resultData.ble,
+										platform: resultData.platform,
+										fmt: resultData.snapSupportFmt.fmt,})						
 				console.log(`API response: ${JSON.stringify(resultData)}`)
+				self.updateActions()
 			},
 		
 		},
+		
+		get_iso: {
+			// This gets the current ISO value of the camera
+			// The camera has a set list of ISO values that it can be set to
+			// This will return the current ISO value and set it to a custom variable iso
+			// It will also return the available ISO values and set it to a custom variable iso_opts
+			name: 'Video: Get ISO Value',
+			callback: async () => {
+				console.log('Getting ISO Value')
+				console.log(`API send: ${self.baseUrl}/ctrl/get?k=iso`)
+				const response = await fetch(`${self.baseUrl}/ctrl/get?k=iso`, { method: 'GET' })
+				let resultData = await response.json()
+				self.setVariableValues({ iso: resultData.value,
+										iso_opts: resultData.opts
+										})
+				console.log(`API response: ${JSON.stringify(resultData)}`)
+				self.updateActions()
+			},
+		},
+
+		get_mode: {
+			// This gets the current mode of the camera
+			// The camera has 3 modes: Record, Playback, and Standby
+			// This will set custom variable 'mode'
+			name: 'System: Get Working Mode',
+			callback: async () => {
+				console.log('Getting Info')
+				console.log(`API send: ${self.baseUrl}/ctrl/mode?action=query`)
+				const response = await fetch(`${self.baseUrl}/ctrl/mode?action=query`, { method: 'GET' })
+				let resultData = await response.json()
+				self.setVariableValues({ mode: resultData.msg })				
+				console.log(`API response: ${JSON.stringify(resultData)}`)
+				self.updateActions()
+			},		
+		},
+		
+		///////////////////////////////////////////////////////////////////
+		//////////////////////////  SET ACTIONS  //////////////////////////
+		///////////////////////////////////////////////////////////////////
+
 		set_iso: {
+			// This sets the camera to a specific ISO value
+			// The camera has a set list of ISO values that it can be set to
+			// TODO: HOW TO GET THE LIST OF ISO VALUES into a dropdown list
 			name: 'Video: Set ISO Value',
 			options: [
 				{
@@ -58,7 +102,6 @@ module.exports = function (self) {
 						{id: '32000' ,label: '32000' },
 						{id: '40000' ,label: '40000' },
 						{id: '51200' ,label: '51200' },
-						
 					],
 				},
 			],
@@ -67,11 +110,66 @@ module.exports = function (self) {
 				const response = await fetch(`${self.baseUrl}/ctrl/set?iso=${event.options.iso}`, { method: 'GET' })
 				let resultData = await response.json()
 				console.log(`API response: ${JSON.stringify(resultData)}`)
+			},
+		},
 
+		set_mode: {
+			// This sets the camera to a specific mode
+			// The camera has 3 modes: Record, Playback, and Standby
+			// This will set the camera to the mode selected in the dropdown list
+			name: 'System: Set Camera Mode',
+			options: [
+				{	
+					type: 'dropdown',
+					id: 'mode',
+					label: 'Camera Mode',
+					default: 'to_rec',
+					choices: [
+						{id: 'to_rec', label: 'Record'},
+						{id: 'to_pb', label: 'Playback'},
+						//{id: 'rec_tl', label: 'Record Timelapse'},
+					],
+					
+				},
+			],
+			callback: async (event) => {
+				//console.log('Hello world!', Choices.CAMERA_MODES)
+				console.log(`API send: ${self.baseUrl}/ctrl/mode?action=${event.options.mode}`)
+				const response = await fetch(`${self.baseUrl}/ctrl/mode?action=${event.options.mode}`, { method: 'GET' })
+				let resultData = await response.json()
+				console.log(`API response: ${JSON.stringify(resultData)}`)
 			},
 		
 		},
+
+		set_pb: {
+			// When the Camera is in Playback mode, This allows you to start or stop the playback of clips
+			name: 'Playback: Set Playback State',
+			options: [
+				{
+					id: 'pb_state',
+					type: 'dropdown',
+					label: 'Playback State',
+					default: 'start',
+					choices: [
+						{id: 'start', label: 'Start'},
+						{id: 'stop', label: 'Stop'},
+					],
+				},
+			],
+			callback: async (event) => {
+				console.log('Start Playback')
+				console.log(`API send: ${self.baseUrl}/ctrl/pb?action=${event.options.pb_state}`)
+				const response = await fetch(`${self.baseUrl}/ctrl/pb?action=${event.options.pb_state}`, { method: 'GET' })
+				let resultData = await response.json()
+				console.log(`API response: ${JSON.stringify(resultData)}`)
+			},
+		},
+
 		set_white_balance_auto: {
+			// This sets the camera to Either Auto,  Manual, or Expert White Balance
+			// Expert White Balance allows you to set the RGB values
+			// TODO: Add Expert White Balance
 			name: 'White Balance: Auto White Balance',
 			options: [
 				{	
@@ -96,7 +194,9 @@ module.exports = function (self) {
 				console.log(`API response: ${JSON.stringify(resultData)}`)
 			},
 		},
+
 		set_white_balance: {
+			// When the Camera is in Manual White Balance mode, This allows you to set the KELVIN value (4300K)
 			name: 'White Balance: Set Klevin Value',
 			options: [
 				{
@@ -117,7 +217,9 @@ module.exports = function (self) {
 				console.log(`API response: ${JSON.stringify(resultData)}`)
 			},
 		},
+
 		set_rec: {
+			//When the Camera is in Record mode, This allows you to start or stop the record
 			name: 'Record: Set Recording State',
 			options: [
 				{
@@ -130,7 +232,6 @@ module.exports = function (self) {
 						{id: 'stop', label: 'Stop'},
 					],
 				},
-
 			],
 			callback: async (event) => {
 				console.log('Start Recording')
@@ -140,86 +241,5 @@ module.exports = function (self) {
 				console.log(`API response: ${JSON.stringify(resultData)}`)
 			},
 		},
-		set_pb: {
-			name: 'Playback: Set Playback State',
-			options: [
-				{
-					id: 'pb_state',
-					type: 'dropdown',
-					label: 'Playback State',
-					default: 'start',
-					choices: [
-						{id: 'start', label: 'Start'},
-						{id: 'stop', label: 'Stop'},
-					],
-				},
-
-			],
-			callback: async (event) => {
-				console.log('Start Playback')
-				console.log(`API send: ${self.baseUrl}/ctrl/pb?action=${event.options.pb_state}`)
-				const response = await fetch(`${self.baseUrl}/ctrl/pb?action=${event.options.pb_state}`, { method: 'GET' })
-				let resultData = await response.json()
-				console.log(`API response: ${JSON.stringify(resultData)}`)
-			},
-		},
-
-		get_iso: {
-			name: 'Video: Get ISO Value',
-			callback: async () => {
-				console.log('Getting ISO Value')
-				console.log(`API send: ${self.baseUrl}/ctrl/get?k=iso`)
-				const response = await fetch(`${self.baseUrl}/ctrl/get?k=iso`, { method: 'GET' })
-				let resultData = await response.json()
-				self.setVariableValues({ iso: resultData.value,
-										iso_opts: resultData.opts
-										})
-				
-
-				console.log(`API response: ${JSON.stringify(resultData)}`)
-				self.updateActions()
-			},
-		
-		},
-
-		
-		get_info: {
-			name: 'System: Get Camera Info',
-			callback: async () => {
-				console.log('Getting Info')
-				console.log(`API send: ${self.baseUrl}/info`)
-				const response = await fetch(`${self.baseUrl}/info`, { method: 'GET' })
-				let resultData = await response.json()
-				self.setVariableValues({ sn: resultData.sn, 
-										sw: resultData.sw, 
-										eth_ip: resultData.eth_ip, 
-										cam_num: resultData.number,
-										hw: resultData.hw,
-										mac: resultData.mac,
-										ble: resultData.ble,
-										platform: resultData.platform,
-										fmt: resultData.fmt,})
-										
-				console.log(`API response: ${JSON.stringify(resultData)}`)
-				self.updateActions()
-			},
-		
-		},
-		get_mode: {
-			name: 'System: Get Working Mode',
-			callback: async () => {
-				console.log('Getting Info')
-				console.log(`API send: ${self.baseUrl}/ctrl/mode?action=query`)
-				const response = await fetch(`${self.baseUrl}/ctrl/mode?action=query`, { method: 'GET' })
-				let resultData = await response.json()
-				self.setVariableValues({ mode: resultData.msg })
-										
-				console.log(`API response: ${JSON.stringify(resultData)}`)
-				self.updateActions()
-			},
-		
-		
-		},
-
 	})
 }
