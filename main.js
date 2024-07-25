@@ -7,7 +7,7 @@ const UpdateVariableDefinitions = require('./variables')
 class ModuleInstance extends InstanceBase {
 	
 	session
-	baseUrl
+	baseUrl = 'http://10.10.0.176' // Default IP
 	mode
 	
 	constructor(internal) {
@@ -20,6 +20,8 @@ class ModuleInstance extends InstanceBase {
 		this.updateActions() // export actions
 		this.updateFeedbacks() // export feedbacks
 		this.updateVariableDefinitions() // export variable definitions
+		//this.updateCameraStatus()
+
 	}
 	// When module gets deleted
 	async destroy() {
@@ -47,6 +49,7 @@ class ModuleInstance extends InstanceBase {
 			},
 		]
 	}
+
 
 	updateActions() {
 		UpdateActions(this)
